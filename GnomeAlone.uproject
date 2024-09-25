@@ -53,6 +53,10 @@
 				"Linux",
 				"Android"
 			]
+		},
+		{
+			"Name": "OnlineSubsystemSteam",
+			"Enabled": true
 		}
 	]
 }
