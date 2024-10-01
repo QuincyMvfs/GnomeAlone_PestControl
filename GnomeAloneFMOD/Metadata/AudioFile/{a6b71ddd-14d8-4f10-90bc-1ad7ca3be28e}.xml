@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<objects serializationModel="Studio.02.02.00">
+	<object class="AudioFile" id="{a6b71ddd-14d8-4f10-90bc-1ad7ca3be28e}">
+		<property name="assetPath">
+			<value>Sound Effects/Footsteps/FootstepSFX_06.wav</value>
+		</property>
+		<property name="frequencyInKHz">
+			<value>44.0999985</value>
+		</property>
+		<property name="channelCount">
+			<value>2</value>
+		</property>
+		<property name="length">
+			<value>0.23755102040816325</value>
+		</property>
+		<relationship name="masterAssetFolder">
+			<destination>{36e5cab1-617d-484c-b069-c89b012812a1}</destination>
+		</relationship>
+	</object>
+</objects>
