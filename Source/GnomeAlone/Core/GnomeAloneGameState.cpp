@@ -28,10 +28,15 @@ void AGnomeAloneGameState::BeginPlay()
 	}
 }
 
-void AGnomeAloneGameState::ObjectDestroyed(AActor* Destroyer, AActor* Destroyed)
+void AGnomeAloneGameState::ObjectDestroyed(AActor* Destroyer, AActor* Destroyed, float Amount)
 {
 	if (Destroyed)
 	{
-		
+		TotalDestruction += Amount;
+		TotalDestruction = FMath::Clamp(TotalDestruction, 0, MaxDestruction);
+		UE_LOG(LogTemp, Warning, TEXT("DESTROYED %s | %f | NEW TOTAL DESTRUCTION: %f"),
+			*Destroyed->GetName(), Amount, TotalDestruction);
+
+		OnObjectDestroyedEvent.Broadcast(Destroyed, Amount, TotalDestruction);
 	}
 }

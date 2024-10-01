@@ -6,9 +6,9 @@
 #include "GameFramework/GameStateBase.h"
 #include "GnomeAloneGameState.generated.h"
 
-/**
- * 
- */
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FOnObjectDestroyed, AActor*, Destroyed, float, Amount, float, TotalDestruction);
+
+
 UCLASS()
 class GNOMEALONE_API AGnomeAloneGameState : public AGameStateBase
 {
@@ -25,6 +25,9 @@ public:
 	UPROPERTY(Replicated, BlueprintReadOnly, VisibleAnywhere)
 	float MaxDestruction = 10.0f;
 
+	UPROPERTY(BlueprintAssignable)
+	FOnObjectDestroyed OnObjectDestroyedEvent;
+	
 	UFUNCTION(BlueprintCallable)
-	void ObjectDestroyed(AActor* Destroyer, AActor* Destroyed);
+	void ObjectDestroyed(AActor* Destroyer, AActor* Destroyed, float Amount);
 };
