@@ -13,6 +13,9 @@ class AGnomeAloneGameMode : public AGameModeBase
 
 public:
 	AGnomeAloneGameMode();
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
+	float MaxDestruction = 500.0f;
 };
 
 
