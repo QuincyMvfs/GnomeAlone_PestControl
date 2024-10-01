@@ -12,6 +12,8 @@ void AGnomeAloneGameState::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>&
 
 	DOREPLIFETIME(AGnomeAloneGameState, TotalDestruction);
 	DOREPLIFETIME(AGnomeAloneGameState, MaxDestruction);
+	DOREPLIFETIME(AGnomeAloneGameState, RemainingGnomeLives);
+	DOREPLIFETIME(AGnomeAloneGameState, TotalGnomeLives);
 }
 
 void AGnomeAloneGameState::BeginPlay()
@@ -23,7 +25,8 @@ void AGnomeAloneGameState::BeginPlay()
 		if (const AGnomeAloneGameMode *GM = Cast<AGnomeAloneGameMode>(GetWorld()->GetAuthGameMode()))
 		{
 			MaxDestruction = GM->MaxDestruction;
-			UE_LOG(LogTemp, Warning, TEXT("GameState | Max Destruction: %f"), MaxDestruction);
+			TotalGnomeLives = GM->TotalGnomeLives;
+			RemainingGnomeLives = TotalGnomeLives;
 		}
 	}
 }
@@ -34,9 +37,20 @@ void AGnomeAloneGameState::ObjectDestroyed(AActor* Destroyer, AActor* Destroyed,
 	{
 		TotalDestruction += Amount;
 		TotalDestruction = FMath::Clamp(TotalDestruction, 0, MaxDestruction);
-		UE_LOG(LogTemp, Warning, TEXT("DESTROYED %s | %f | NEW TOTAL DESTRUCTION: %f"),
-			*Destroyed->GetName(), Amount, TotalDestruction);
+		// UE_LOG(LogTemp, Warning, TEXT("DESTROYED %s | %f | NEW TOTAL DESTRUCTION: %f"),
+		// 	*Destroyed->GetName(), Amount, TotalDestruction);
 
 		OnObjectDestroyedEvent.Broadcast(Destroyed, Amount, TotalDestruction);
+	}
+}
+
+void AGnomeAloneGameState::GnomeKilled(AActor* Killed, AActor* Killer)
+{
+	if (Killed)
+	{
+		RemainingGnomeLives--;
+		RemainingGnomeLives = FMath::Clamp(RemainingGnomeLives, 0, TotalGnomeLives);
+
+		OnGnomeKilledEvent.Broadcast(Killed, Killer, RemainingGnomeLives);
 	}
 }

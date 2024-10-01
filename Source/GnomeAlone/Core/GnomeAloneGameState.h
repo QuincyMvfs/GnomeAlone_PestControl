@@ -7,6 +7,7 @@
 #include "GnomeAloneGameState.generated.h"
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FOnObjectDestroyed, AActor*, Destroyed, float, Amount, float, TotalDestruction);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FOnGnomeKilled, AActor*, Killed, AActor*, Killer, int, RemainingLives);
 
 
 UCLASS()
@@ -25,9 +26,21 @@ public:
 	UPROPERTY(Replicated, BlueprintReadOnly, VisibleAnywhere)
 	float MaxDestruction = 10.0f;
 
+	UPROPERTY(Replicated, BlueprintReadOnly, VisibleAnywhere)
+	int RemainingGnomeLives = 0;
+
+	UPROPERTY(Replicated, BlueprintReadOnly, VisibleAnywhere)
+	int TotalGnomeLives = 10;
+
 	UPROPERTY(BlueprintAssignable)
 	FOnObjectDestroyed OnObjectDestroyedEvent;
+
+	UPROPERTY(BlueprintAssignable)
+	FOnGnomeKilled OnGnomeKilledEvent;
 	
 	UFUNCTION(BlueprintCallable)
 	void ObjectDestroyed(AActor* Destroyer, AActor* Destroyed, float Amount);
+
+	UFUNCTION(BlueprintCallable)
+	void GnomeKilled(AActor* Killed, AActor* Killer);
 };

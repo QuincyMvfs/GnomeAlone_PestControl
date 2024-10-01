@@ -16,6 +16,9 @@ public:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
 	float MaxDestruction = 500.0f;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
+	int TotalGnomeLives = 10;
 };
 
 
