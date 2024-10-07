@@ -12,7 +12,7 @@ void AGnomeCharacter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutL
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
 	DOREPLIFETIME(AGnomeCharacter, M_IsSprinting);
-
+	DOREPLIFETIME(AGnomeCharacter, M_IsSneaking);
 }
 
 void AGnomeCharacter::BeginPlay()
@@ -35,6 +35,10 @@ void AGnomeCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComp
 		EnhancedInputComponent->BindAction(SprintAction, ETriggerEvent::Started, this, &AGnomeCharacter::SetSprinting);
 		EnhancedInputComponent->BindAction(SprintAction, ETriggerEvent::Completed, this, &AGnomeCharacter::SetSprinting);
 
+		// Sneaking
+		EnhancedInputComponent->BindAction(SneakAction, ETriggerEvent::Started, this, &AGnomeCharacter::SetSneaking);
+		EnhancedInputComponent->BindAction(SneakAction, ETriggerEvent::Completed, this, &AGnomeCharacter::SetSneaking);
+		
 		// Interacting
 		EnhancedInputComponent->BindAction(InteractAction, ETriggerEvent::Started, this, &ACharacter::Jump);
 
@@ -53,6 +57,8 @@ void AGnomeCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComp
 
 void AGnomeCharacter::SetSprinting()
 {
+	if (M_IsSneaking) return;
+	
 	M_IsSprinting = !M_IsSprinting;
 	
 	float NewSprintSpeed = 0.0f;
@@ -70,5 +76,29 @@ void AGnomeCharacter::Server_SetSprinting_Implementation(bool IsSprinting, float
 void AGnomeCharacter::Multi_SetSprinting_Implementation(bool IsSprinting, float NewSprintSpeed)
 {
 	if (IsSprinting) { M_CharacterMovementComponent->MaxWalkSpeed = M_SprintSpeed; }
+	else { M_CharacterMovementComponent->MaxWalkSpeed = M_WalkSpeed; }
+}
+
+void AGnomeCharacter::SetSneaking()
+{
+	if (M_IsSprinting) return;
+	
+	M_IsSneaking = !M_IsSneaking;
+
+	float NewSneakSpeed = 0.0f;
+	if (M_IsSneaking) { NewSneakSpeed = M_SneakSpeed; }
+	else { NewSneakSpeed = M_WalkSpeed; }
+
+	Server_SetSneaking(M_IsSneaking, NewSneakSpeed);
+}
+
+void AGnomeCharacter::Server_SetSneaking_Implementation(bool IsSneaking, float NewSpeed)
+{
+	Multi_SetSneaking(IsSneaking, NewSpeed);
+}
+
+void AGnomeCharacter::Multi_SetSneaking_Implementation(bool IsSneaking, float NewSpeed)
+{
+	if (IsSneaking) { M_CharacterMovementComponent->MaxWalkSpeed = M_SneakSpeed; }
 	else { M_CharacterMovementComponent->MaxWalkSpeed = M_WalkSpeed; }
 }

@@ -19,14 +19,19 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 	UInputAction* JumpAction;
 
-	/** Jump Input Action */
+	/** Sprint Input Action */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 	UInputAction* SprintAction;
+
+	/** Sneak Input Action */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+	UInputAction* SneakAction;
 
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 
 	virtual void SetupPlayerInputComponent(UInputComponent* PlayerInputComponent) override;
 
+	// Sprinting
 	void SetSprinting();
 
 	UFUNCTION(Server, Unreliable)
@@ -36,6 +41,17 @@ protected:
 	UFUNCTION(NetMulticast, Unreliable)
 	void Multi_SetSprinting(bool IsSprinting, float NewSprintSpeed);
 	void Multi_SetSprinting_Implementation(bool IsSprinting, float NewSprintSpeed);
+
+	// Sneaking
+	void SetSneaking();
+
+	UFUNCTION(Server, Unreliable)
+	void Server_SetSneaking(bool IsSneaking, float NewSpeed);
+	void Server_SetSneaking_Implementation(bool IsSneaking, float NewSpeed);
+
+	UFUNCTION(NetMulticast, Unreliable)
+	void Multi_SetSneaking(bool IsSneaking, float NewSpeed);
+	void Multi_SetSneaking_Implementation(bool IsSneaking, float NewSpeed);
 	
 	virtual void BeginPlay() override;
 	
@@ -50,4 +66,7 @@ protected:
 	
 	UPROPERTY(Replicated, VisibleAnywhere, BlueprintReadOnly)
 	bool M_IsSprinting = false;
+
+	UPROPERTY(Replicated, VisibleAnywhere, BlueprintReadOnly)
+	bool M_IsSneaking = false;
 };
