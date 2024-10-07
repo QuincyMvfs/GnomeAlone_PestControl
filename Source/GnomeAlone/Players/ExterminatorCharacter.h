@@ -13,5 +13,9 @@ UCLASS()
 class GNOMEALONE_API AExterminatorCharacter : public AGnomeAloneCharacter
 {
 	GENERATED_BODY()
+
+	virtual void Jump() override;
+
+	virtual void SetupPlayerInputComponent(UInputComponent* PlayerInputComponent) override;
 	
 };
