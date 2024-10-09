@@ -57,8 +57,6 @@ void AGnomeCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComp
 
 void AGnomeCharacter::SetSprinting()
 {
-	if (M_IsSneaking) return;
-	
 	M_IsSprinting = !M_IsSprinting;
 	
 	float NewSprintSpeed = 0.0f;
