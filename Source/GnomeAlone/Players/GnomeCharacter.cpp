@@ -38,9 +38,9 @@ void AGnomeCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComp
 		// Sneaking
 		EnhancedInputComponent->BindAction(SneakAction, ETriggerEvent::Started, this, &AGnomeCharacter::SetSneaking);
 		EnhancedInputComponent->BindAction(SneakAction, ETriggerEvent::Completed, this, &AGnomeCharacter::SetSneaking);
-		
+
 		// Interacting
-		EnhancedInputComponent->BindAction(InteractAction, ETriggerEvent::Started, this, &ACharacter::Jump);
+		EnhancedInputComponent->BindAction(InteractAction, ETriggerEvent::Started, this, &AGnomeCharacter::Interact);
 
 		// Moving
 		EnhancedInputComponent->BindAction(MoveAction, ETriggerEvent::Triggered, this, &AGnomeAloneCharacter::Move);
@@ -99,4 +99,40 @@ void AGnomeCharacter::Multi_SetSneaking_Implementation(bool IsSneaking, float Ne
 {
 	if (IsSneaking) { M_CharacterMovementComponent->MaxWalkSpeed = M_SneakSpeed; }
 	else { M_CharacterMovementComponent->MaxWalkSpeed = M_WalkSpeed; }
+}
+
+void AGnomeCharacter::Interact()
+{
+	const FVector StartLocation = GetMesh()->GetComponentLocation();
+	Server_Interact(StartLocation, this);
+}
+
+void AGnomeCharacter::Server_Interact_Implementation(FVector StartPosition, AActor* InteractingActor)
+{
+	UWorld* World = GetWorld();
+	FVector Start = StartPosition;
+	FVector End = Start;
+	float Radius = 100.0f;
+	FHitResult OutHit;
+	
+	FCollisionQueryParams CollisionParams;
+	CollisionParams.AddIgnoredActor(InteractingActor);
+
+	if (bool bHit = World->SweepSingleByChannel(OutHit, Start, End, FQuat::Identity, ECC_Visibility,
+		FCollisionShape::MakeSphere(Radius), CollisionParams))
+	{
+		DrawDebugSphere(World, OutHit.ImpactPoint, Radius, 32, FColor::Red, false, 1.0f);
+		DrawDebugLine(World, Start, End, FColor::Red, false, 1.0f);
+	}
+	else
+	{
+		DrawDebugLine(World, Start, End, FColor::Green, false, 1.0f);
+	}
+
+	Multi_Interact(StartPosition, InteractingActor);
+}
+
+void AGnomeCharacter::Multi_Interact_Implementation(FVector StartPosition, AActor* InteractingActor)
+{
+	DrawDebugSphere(GetWorld(), StartPosition, 50.0, 32, FColor::Red, false, 1.0f);
 }

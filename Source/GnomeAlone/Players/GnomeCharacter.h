@@ -27,6 +27,10 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 	UInputAction* SneakAction;
 
+	/** Interact Input Action */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+	UInputAction* InteractAction;
+
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 
 	virtual void SetupPlayerInputComponent(UInputComponent* PlayerInputComponent) override;
@@ -52,6 +56,17 @@ protected:
 	UFUNCTION(NetMulticast, Unreliable)
 	void Multi_SetSneaking(bool IsSneaking, float NewSpeed);
 	void Multi_SetSneaking_Implementation(bool IsSneaking, float NewSpeed);
+
+	// Interact
+	void Interact();
+
+	UFUNCTION(Server, Unreliable)
+	void Server_Interact(FVector StartPosition, AActor* InteractingActor);
+	void Server_Interact_Implementation(FVector StartPosition, AActor* InteractingActor);
+
+	UFUNCTION(NetMulticast, Unreliable)
+	void Multi_Interact(FVector StartPosition, AActor* InteractingActor);
+	void Multi_Interact_Implementation(FVector StartPosition, AActor* InteractingActor);
 	
 	virtual void BeginPlay() override;
 	
